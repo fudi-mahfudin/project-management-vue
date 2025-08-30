@@ -18,7 +18,34 @@ async function seedProjects(numEntries = 10) {
     })
   }
 
-  const { data, error } = await supabase.from('projects').insert(projects)
+  const { data, error } = await supabase.from('projects').insert(projects).select('id')
+
+  if (error) return console.error('Projects', error)
+
+  return data
 }
 
-seedProjects(12)
+async function seedTasks(numEntries, projectsIds) {
+  const tasks = []
+
+  for (let i = 0; i < numEntries; i++) {
+    tasks.push({
+      name: faker.lorem.words(3),
+      status: faker.helpers.arrayElement(['in-progress', 'completed']),
+      description: faker.lorem.paragraph(1),
+      due_date: faker.date.future(),
+      project_id: faker.helpers.arrayElement(projectsIds),
+      collaborators: faker.helpers.arrayElements([1, 2, 3]),
+    })
+  }
+
+  const { data, error } = await supabase.from('tasks').insert(tasks).select('id')
+
+  if (error) return console.error('Tasks', error)
+
+  return data
+}
+
+const projects = await seedProjects(12)
+const projectsIds = projects.map((p) => p.id)
+await seedTasks(30, projectsIds)
