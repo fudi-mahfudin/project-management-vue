@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import { RouterLink, useRoute } from 'vue-router'
+
+const route = useRoute()
+</script>
+
+<template>
+  <div>
+    <h1>Projects {{ route.params?.slug }}</h1>
+    <RouterLink to="/projects">Projects</RouterLink>
+  </div>
+</template>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { supabase } from '@/lib/supabaseClient'
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { h, ref } from 'vue'
 import type { Tables } from '@/database/types'
+import type { ColumnDef } from '@tanstack/vue-table'
+import DataTable from '@/components/ui/data-table/DataTable.vue'
 
 const tasks = ref<Tables<'tasks'>[]>([])
 
@@ -11,16 +13,50 @@ const tasks = ref<Tables<'tasks'>[]>([])
 
   tasks.value = data ?? []
 })()
+
+const columns: ColumnDef<Tables<'tasks'>>[] = [
+  {
+    accessorKey: 'name',
+    header: () => h('div', {}, 'Name'),
+    cell: ({ row }) => {
+      return h(
+        RouterLink,
+        { to: `/tasks/${row.original.id}`, class: 'font-medium hover:bg-muted block w-full' },
+        () => row.getValue('name'),
+      )
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: () => h('div', {}, 'Status'),
+    cell: ({ row }) => {
+      return h('div', { class: 'font-medium' }, row.getValue('status'))
+    },
+  },
+  {
+    accessorKey: 'due_date',
+    header: () => h('div', {}, 'Due Date'),
+    cell: ({ row }) => {
+      return h('div', { class: 'font-medium' }, row.getValue('due_date'))
+    },
+  },
+  {
+    accessorKey: 'project_id',
+    header: () => h('div', {}, 'Project'),
+    cell: ({ row }) => {
+      return h('div', { class: 'font-medium' }, row.getValue('project_id'))
+    },
+  },
+  {
+    accessorKey: 'collaborators',
+    header: () => h('div', {}, 'Collaborators'),
+    cell: ({ row }) => {
+      return h('div', { class: 'font-medium' }, JSON.stringify(row.getValue('collaborators')))
+    },
+  },
+]
 </script>
 
 <template>
-  <div>
-    <h1>Tasks</h1>
-    <RouterLink to="/">Home</RouterLink>
-    <ul>
-      <li v-for="task in tasks" :key="task.id">
-        {{ task.name }}
-      </li>
-    </ul>
-  </div>
+  <DataTable :columns="columns" :data="tasks" />
 </template>

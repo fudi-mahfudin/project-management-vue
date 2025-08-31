@@ -6,7 +6,7 @@ const route = useRoute()
 
 <template>
   <div>
-    <h1>Projects {{ route.params?.id }}</h1>
-    <RouterLink to="/projects">Projects</RouterLink>
+    <h1>Tasks {{ route.params?.id }}</h1>
+    <RouterLink to="/tasks">Tasks</RouterLink>
   </div>
 </template>
