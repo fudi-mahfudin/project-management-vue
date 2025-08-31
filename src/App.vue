@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { supabase } from '@/lib/supabaseClient'
-
-console.log(supabase)
+import AuthLayout from '@/components/layout/main/AuthLayout.vue'
 </script>
 
 <template>
-  <main>
+  <AuthLayout>
     <RouterView />
-  </main>
+  </AuthLayout>
 </template>
 
 <style scoped></style>
