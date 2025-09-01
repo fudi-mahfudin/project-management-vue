@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
 import {
   BadgeCheckIcon,
   Building2Icon,
@@ -9,14 +8,6 @@ import {
   PlusIcon,
   UserIcon,
 } from 'lucide-vue-next'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import SidebarLinks from './SidebarLinks.vue'
-import { computed } from 'vue'
 
 const links = [
   { title: 'Dashboard', to: '/', icon: HouseIcon },

@@ -1,17 +1,6 @@
 <script setup lang="ts">
 import { useDark, useToggle } from '@vueuse/core'
 import { MoonIcon, SearchIcon, SunIcon } from 'lucide-vue-next'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const profile = {
   avatar_url: 'https://github.com/andrewbale.png',
