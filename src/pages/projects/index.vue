@@ -4,13 +4,17 @@ import { RouterLink } from 'vue-router'
 import type { Tables } from '@/database/types'
 import type { ColumnDef } from '@tanstack/vue-table'
 
+usePageStore().pageData.title = 'Projects'
+
 const projects = ref<Tables<'projects'>[]>([])
 
-;(async () => {
+const fetchData = async () => {
   const { data, error } = await supabase.from('projects').select()
 
   projects.value = data ?? []
-})()
+}
+
+await fetchData()
 
 const columns: ColumnDef<Tables<'projects'>>[] = [
   {

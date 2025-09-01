@@ -4,13 +4,19 @@ import { RouterLink } from 'vue-router'
 import type { Tables } from '@/database/types'
 import type { ColumnDef } from '@tanstack/vue-table'
 
+usePageStore().pageData.title = 'Tasks'
+
 const tasks = ref<Tables<'tasks'>[]>([])
 
-;(async () => {
-  const { data, error } = await supabase.from('tasks').select()
-
+const fetchData = async () => {
+  const { data, error } = await supabase.from('tasks').select(`
+    *,
+    projects(id, name, slug)
+  `)
   tasks.value = data ?? []
-})()
+}
+
+await fetchData()
 
 const columns: ColumnDef<Tables<'tasks'>>[] = [
   {
@@ -39,10 +45,17 @@ const columns: ColumnDef<Tables<'tasks'>>[] = [
     },
   },
   {
-    accessorKey: 'project_id',
+    accessorKey: 'projects.name',
     header: () => h('div', {}, 'Project'),
     cell: ({ row }) => {
-      return h('div', { class: 'font-medium' }, row.getValue('project_id'))
+      return h(
+        RouterLink,
+        {
+          to: `/tasks/${row.original.projects?.id}`,
+          class: 'font-medium hover:bg-muted block w-full',
+        },
+        () => row.original.projects?.name,
+      )
     },
   },
   {
