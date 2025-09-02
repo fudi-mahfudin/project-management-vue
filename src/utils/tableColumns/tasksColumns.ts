@@ -1,8 +1,11 @@
 import type { ColumnDef } from '@tanstack/vue-table'
 import type { TasksWithProjects } from '../supaQueries'
 import { RouterLink } from 'vue-router'
+import type { GroupedCollabs } from '@/types/GroupedCollabs'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import AppInPlaceEditStatus from '@/components/app-in-place-edit/AppInPlaceEditStatus.vue'
 
-export const columns: ColumnDef<TasksWithProjects[0]>[] = [
+export const columns = (collabs: Ref<GroupedCollabs>): ColumnDef<TasksWithProjects[0]>[] => [
   {
     accessorKey: 'name',
     header: () => h('div', {}, 'Name'),
@@ -18,7 +21,11 @@ export const columns: ColumnDef<TasksWithProjects[0]>[] = [
     accessorKey: 'status',
     header: () => h('div', {}, 'Status'),
     cell: ({ row }) => {
-      return h('div', { class: 'font-medium' }, row.getValue('status'))
+      return h(
+        'div',
+        { class: 'font-medium' },
+        h(AppInPlaceEditStatus, { modelValue: row.original.status, readonly: true }),
+      )
     },
   },
   {
@@ -46,7 +53,21 @@ export const columns: ColumnDef<TasksWithProjects[0]>[] = [
     accessorKey: 'collaborators',
     header: () => h('div', {}, 'Collaborators'),
     cell: ({ row }) => {
-      return h('div', { class: 'font-medium' }, JSON.stringify(row.getValue('collaborators')))
+      return h(
+        'div',
+        { class: 'font-medium h-10 flex items-center' },
+        collabs.value[row.original.id]
+          ? collabs.value[row.original.id].map((collab) => {
+              return h(RouterLink, { to: `/users/${collab.username}` }, () => {
+                return h(Avatar, { class: 'hover:scale-110 transition-transform' }, () =>
+                  h(AvatarImage, { src: collab.avatar_url || '' }),
+                )
+              })
+            })
+          : row.original.collaborators.map(() => {
+              return h(Avatar, { class: 'animate-pulse' }, () => h(AvatarFallback))
+            }),
+      )
     },
   },
 ]

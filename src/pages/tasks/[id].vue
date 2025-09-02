@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { taskQuery } from '@/utils/supaQueries'
-import type { Task } from '@/utils/supaQueries'
+import { useCollabs } from '@/composables/collabs'
+import { useTasksStore } from '@/stores/loaders/tasks'
 
-const route = useRoute('/tasks/[id]')
-const task = ref<Task | null>(null)
+const { id } = useRoute('/tasks/[id]').params
+
+const tasksLoader = useTasksStore()
+const { task } = storeToRefs(tasksLoader)
+const { getTaskById, updateTask } = tasksLoader
 
 watch(
   () => task.value?.name,
@@ -12,25 +15,25 @@ watch(
   },
 )
 
-const getTask = async () => {
-  const { data, error, status } = await taskQuery(route.params.id)
+await getTaskById(id)
+const { getProfilesByIds } = useCollabs()
 
-  if (error) useErrorStore().setError({ error: error, customCode: status })
-  task.value = data
-}
-
-await getTask()
+const collabs = task.value?.collaborators ? await getProfilesByIds(task.value?.collaborators) : []
 </script>
 
 <template>
   <Table v-if="task">
     <TableRow>
       <TableHead>Name</TableHead>
-      <TableCell>{{ task.name }}</TableCell>
+      <TableCell>
+        <AppInPlaceEditText v-model="task.name" @commit="updateTask" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead>Description</TableHead>
-      <TableCell>{{ task.description }}</TableCell>
+      <TableCell>
+        <AppInPlaceEditTextarea v-model="task.description" @commit="updateTask" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead>Assignee</TableHead>
@@ -38,11 +41,20 @@ await getTask()
     </TableRow>
     <TableRow>
       <TableHead>Project</TableHead>
-      <TableCell>{{ task.projects?.name }}</TableCell>
+      <TableCell class="p-0">
+        <RouterLink
+          :to="{ name: '/projects/[slug]', params: { slug: task.projects?.slug || '' } }"
+          class="p-2 block hover:bg-secondary"
+        >
+          {{ task.projects?.name }}
+        </RouterLink>
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead>Status</TableHead>
-      <TableCell>{{ task.status }}</TableCell>
+      <TableCell>
+        <AppInPlaceEditStatus v-model="task.status" @commit="updateTask" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead>Due Date</TableHead>
@@ -54,12 +66,15 @@ await getTask()
         <div class="flex">
           <Avatar
             class="-mr-4 border border-primary hover:scale-110 transition-transform"
-            v-for="collab in task.collaborators"
-            :key="collab"
+            v-for="collab in collabs"
+            :key="collab.id"
           >
-            <RouterLink to="" class="w-full h-full flex items-center justify-center">
-              <AvatarImage src="" alt="" />
-              <AvatarFallback>AC</AvatarFallback>
+            <RouterLink
+              :to="{ name: '/users/[username]', params: { username: collab.username } }"
+              class="w-full h-full flex items-center justify-center"
+            >
+              <AvatarImage :src="collab.avatar_url || ''" alt="profile image" />
+              <AvatarFallback>{{ collab.username.charAt(0).toUpperCase() }}</AvatarFallback>
             </RouterLink>
           </Avatar>
         </div>
