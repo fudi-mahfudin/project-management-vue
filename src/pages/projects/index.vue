@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import { projectsQuery } from '@/utils/supaQueries'
-import type { Projects } from '@/utils/supaQueries'
+import { useCollabs } from '@/composables/collabs'
+import { useProjectsStore } from '@/stores/loaders/projects'
 import { columns } from '@/utils/tableColumns/projectsColumns'
 
 usePageStore().pageData.title = 'Projects'
 
-const projects = ref<Projects>([])
+const projectsLoader = useProjectsStore()
+const { projects } = storeToRefs(projectsLoader)
+const { getProjects } = projectsLoader
 
-const fetchData = async () => {
-  const { data, error, status } = await projectsQuery
+await getProjects()
 
-  if (error) useErrorStore().setError({ error: error, customCode: status })
-  projects.value = data ?? []
-}
+const { getGroupedCollabs, groupedCollabs } = useCollabs()
 
-await fetchData()
+getGroupedCollabs(projects.value)
+
+const columnsWithCollabs = columns(groupedCollabs)
 </script>
 
 <template>
-  <DataTable :columns="columns" :data="projects" />
+  <DataTable :columns="columnsWithCollabs" :data="projects" />
 </template>
