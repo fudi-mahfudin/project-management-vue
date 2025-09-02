@@ -1,17 +1,34 @@
 <script setup lang="ts">
+import { useFormErrors } from '@/composables/formErrors'
 import { login } from '@/utils/supaAuth'
+import { watchDebounced } from '@vueuse/core'
 
 const formData = ref({
   email: '',
   password: '',
 })
 
+const { serverError, handleServerError, realtimeErrors, handleLoginForm } = useFormErrors()
+
 const router = useRouter()
 
-const handleLogin = async () => {
-  const isLoggedin = await login(formData.value)
+watchDebounced(
+  formData,
+  () => {
+    handleLoginForm(formData.value)
+  },
+  {
+    debounce: 1000,
+    deep: true,
+  },
+)
 
-  if (isLoggedin) router.push('/')
+const handleLogin = async () => {
+  const { error } = await login(formData.value)
+
+  if (!error) return router.push('/')
+
+  handleServerError(error)
 }
 </script>
 
@@ -38,7 +55,13 @@ const handleLogin = async () => {
               placeholder="alphaofnaps@gmail.com"
               required
               v-model="formData.email"
+              :class="{ 'border-red-500': serverError }"
             />
+            <ul class="text-sm text-left text-red-500" v-if="realtimeErrors?.email.length">
+              <li class="list-disc" v-for="error in realtimeErrors?.email" :key="error">
+                {{ error }}
+              </li>
+            </ul>
           </div>
           <div class="grid gap-2">
             <Label for="password">Password</Label>
@@ -48,8 +71,19 @@ const handleLogin = async () => {
               placeholder="********"
               required
               v-model="formData.password"
+              :class="{ 'border-red-500': serverError }"
             />
+            <ul class="text-sm text-left text-red-500" v-if="realtimeErrors?.password.length">
+              <li class="list-disc" v-for="error in realtimeErrors?.password" :key="error">
+                {{ error }}
+              </li>
+            </ul>
           </div>
+
+          <ul class="text-sm text-left text-red-500" v-if="serverError">
+            <li class="list-disc">{{ serverError }}</li>
+          </ul>
+
           <Button type="submit" class="w-full">Login</Button>
         </form>
 
