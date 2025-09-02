@@ -6,6 +6,14 @@ interface Props {
 }
 
 defineProps<{ links: Props[] }>()
+
+const emits = defineEmits<{
+  actionClicked: [string]
+}>()
+
+const emitActionClicked = (linkTitle: string) => {
+  emits('actionClicked', linkTitle)
+}
 </script>
 
 <template>
@@ -15,7 +23,7 @@ defineProps<{ links: Props[] }>()
       <span class="text-nowrap lg:block hidden">{{ link.title }}</span>
     </RouterLink>
 
-    <div v-else class="nav-link cursor-pointer">
+    <div v-else class="nav-link cursor-pointer" @click="emitActionClicked(link.title)">
       <component :is="link.icon" />
       <span class="text-nowrap lg:block hidden">{{ link.title }}</span>
     </div>

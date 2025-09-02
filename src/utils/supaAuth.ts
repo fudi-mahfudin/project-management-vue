@@ -32,3 +32,11 @@ export async function login(formData: LoginForm) {
 
   return true
 }
+
+export const logout = async () => {
+  const { error } = await supabase.auth.signOut()
+
+  if (error) return console.log(error)
+
+  return true
+}

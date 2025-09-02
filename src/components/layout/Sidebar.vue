@@ -21,6 +21,17 @@ const accountLinks = computed(() => {
     { title: 'Sign Out', icon: LogOutIcon },
   ]
 })
+
+const router = useRouter()
+
+const executeAction = async (linkTitle: string) => {
+  if (linkTitle === 'Sign Out') {
+    const { logout } = await import('@/utils/supaAuth')
+    const isLoggoutOut = await logout()
+
+    if (isLoggoutOut) router.push('/login')
+  }
+}
 </script>
 
 <template>
@@ -38,7 +49,7 @@ const accountLinks = computed(() => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem @click="$emit('taskClicked')"> Task </DropdownMenuItem>
+          <DropdownMenuItem> Task </DropdownMenuItem>
           <DropdownMenuItem> Project </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -50,7 +61,7 @@ const accountLinks = computed(() => {
       </div>
 
       <div class="border-y text-center bg-background py-3">
-        <SidebarLinks :links="accountLinks" />
+        <SidebarLinks :links="accountLinks" @actionClicked="executeAction" />
       </div>
     </nav>
   </aside>

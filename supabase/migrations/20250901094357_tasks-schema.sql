@@ -8,5 +8,6 @@ create table tasks (
   description text not null,
   due_date date default null,
   project_id bigint references projects (id) default null, -- relation to projects
+  profile_id uuid references profiles(id) on delete cascade not null,
   collaborators text array default array[]::varchar[] not null
 );
