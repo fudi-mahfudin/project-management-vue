@@ -9,6 +9,8 @@ import {
   UserIcon,
 } from 'lucide-vue-next'
 
+const { profile } = storeToRefs(useAuthStore())
+
 const links = [
   { title: 'Dashboard', to: '/', icon: HouseIcon },
   { title: 'Projects', to: '/projects', icon: Building2Icon },
@@ -17,7 +19,7 @@ const links = [
 
 const accountLinks = computed(() => {
   return [
-    { title: 'Profile', to: '/users/me', icon: UserIcon },
+    { title: 'Profile', to: '/users/' + profile.value?.username, icon: UserIcon },
     { title: 'Sign Out', icon: LogOutIcon },
   ]
 })
