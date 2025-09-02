@@ -3,6 +3,7 @@ import type { Projects } from '../supaQueries'
 import { RouterLink } from 'vue-router'
 import type { GroupedCollabs } from '@/types/GroupedCollabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import AppInPlaceEditStatus from '@/components/app-in-place-edit/AppInPlaceEditStatus.vue'
 
 export const columns = (collabs: Ref<GroupedCollabs>): ColumnDef<Projects[0]>[] => [
   {
@@ -20,7 +21,11 @@ export const columns = (collabs: Ref<GroupedCollabs>): ColumnDef<Projects[0]>[] 
     accessorKey: 'status',
     header: () => h('div', {}, 'Status'),
     cell: ({ row }) => {
-      return h('div', { class: 'font-medium' }, row.getValue('status'))
+      return h(
+        'div',
+        { class: 'font-medium' },
+        h(AppInPlaceEditStatus, { modelValue: row.original.status, readonly: true }),
+      )
     },
   },
   {

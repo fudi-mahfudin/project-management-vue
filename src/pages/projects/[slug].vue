@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { useCollabs } from '@/composables/collabs'
 import { useProjectsStore } from '@/stores/loaders/projects'
 
 const { slug } = useRoute('/projects/[slug]').params
 
 const projectsLoader = useProjectsStore()
 const { project } = storeToRefs(projectsLoader)
-const { getProjectBySlug } = projectsLoader
+const { getProjectBySlug, updateProject } = projectsLoader
 
 watch(
   () => project.value?.name,
@@ -15,21 +16,29 @@ watch(
 )
 
 await getProjectBySlug(slug)
+
+const { getProfilesByIds } = useCollabs()
+
+const collabs = project.value?.collaborators
+  ? await getProfilesByIds(project.value?.collaborators)
+  : []
 </script>
 
 <template>
   <Table v-if="project">
     <TableRow>
       <TableHead>Name</TableHead>
-      <TableCell>{{ project.name }}</TableCell>
+      <TableCell>
+        <AppInPlaceEditText v-model="project.name" @commit="updateProject" />
+      </TableCell>
     </TableRow>
     <TableRow>
       <TableHead>Description</TableHead>
-      <TableCell>{{ project.description }}</TableCell>
+      <AppInPlaceEditTextarea v-model="project.description" @commit="updateProject" />
     </TableRow>
     <TableRow>
       <TableHead>Status</TableHead>
-      <TableCell>{{ project.status }}</TableCell>
+      <AppInPlaceEditStatus v-model="project.status" @commit="updateProject" />
     </TableRow>
     <TableRow>
       <TableHead>Collaborators</TableHead>
@@ -37,12 +46,15 @@ await getProjectBySlug(slug)
         <div class="flex">
           <Avatar
             class="-mr-4 border border-primary hover:scale-110 transition-transform"
-            v-for="collab in project.collaborators"
-            :key="collab"
+            v-for="collab in collabs"
+            :key="collab.id"
           >
-            <RouterLink to="" class="w-full h-full flex items-center justify-center">
-              <AvatarImage src="" alt="" />
-              <AvatarFallback>AC</AvatarFallback>
+            <RouterLink
+              :to="{ name: '/users/[username]', params: { username: collab.username } }"
+              class="w-full h-full flex items-center justify-center"
+            >
+              <AvatarImage :src="collab.avatar_url || ''" alt="profile image" />
+              <AvatarFallback>{{ collab.username.charAt(0).toUpperCase() }}</AvatarFallback>
             </RouterLink>
           </Avatar>
         </div>
@@ -64,8 +76,17 @@ await getProjectBySlug(slug)
           </TableHeader>
           <TableBody>
             <TableRow v-for="task in project.tasks" :key="task.id">
-              <TableCell>{{ task.name }}</TableCell>
-              <TableCell>{{ task.status }}</TableCell>
+              <TableCell class="p-0">
+                <RouterLink
+                  :to="{ name: '/tasks/[id]', params: { id: task.id } }"
+                  class="hover:bg-secondary block p-4"
+                >
+                  {{ task.name }}
+                </RouterLink>
+              </TableCell>
+              <TableCell>
+                <AppInPlaceEditStatus readonly :modelValue="task.status" />
+              </TableCell>
               <TableCell>{{ task.due_date }}</TableCell>
             </TableRow>
           </TableBody>
