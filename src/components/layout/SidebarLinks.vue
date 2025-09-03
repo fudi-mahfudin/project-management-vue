@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useMenu } from '@/composables/menu'
+
 interface Props {
   title: string
   to?: string
@@ -14,18 +16,30 @@ const emits = defineEmits<{
 const emitActionClicked = (linkTitle: string) => {
   emits('actionClicked', linkTitle)
 }
+
+const { menuOpen } = useMenu()
 </script>
 
 <template>
   <template v-for="link in links" :key="link.title">
-    <RouterLink v-if="link.to" :to="link.to" class="nav-link">
+    <RouterLink
+      v-if="link.to"
+      :to="link.to"
+      class="nav-link"
+      :class="{ 'justify-center': !menuOpen }"
+    >
       <component :is="link.icon" />
-      <span class="text-nowrap lg:block hidden">{{ link.title }}</span>
+      <span class="text-nowrap" :class="{ hidden: !menuOpen }">{{ link.title }}</span>
     </RouterLink>
 
-    <div v-else class="nav-link cursor-pointer" @click="emitActionClicked(link.title)">
+    <div
+      v-else
+      class="nav-link cursor-pointer"
+      @click="emitActionClicked(link.title)"
+      :class="{ 'justify-center': !menuOpen }"
+    >
       <component :is="link.icon" />
-      <span class="text-nowrap lg:block hidden">{{ link.title }}</span>
+      <span class="text-nowrap" :class="{ hidden: !menuOpen }">{{ link.title }}</span>
     </div>
   </template>
 </template>

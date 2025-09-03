@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useMenu } from '@/composables/menu'
+import { useWindowSize } from '@vueuse/core'
 import {
   BadgeCheckIcon,
   Building2Icon,
@@ -36,14 +38,22 @@ const executeAction = async (linkTitle: string) => {
     if (isLoggoutOut) router.push('/login')
   }
 }
+
+const { menuOpen, toggleMenu } = useMenu()
+const windowWidth = useWindowSize().width
+
+watchEffect(() => {
+  menuOpen.value = windowWidth.value >= 1024
+})
 </script>
 
 <template>
   <aside
-    class="flex flex-col h-screen gap-2 border-r fixed bg-muted/40 transition-[width] lg:w-52 w-16"
+    class="flex flex-col h-screen gap-2 border-r fixed bg-muted/40 transition-[width]"
+    :class="{ 'w-52': menuOpen, 'w-24': !menuOpen }"
   >
     <div class="flex h-16 items-center border-b px-2 lg:px-4 shrink-0 gap-1 justify-between">
-      <Button variant="outline" size="icon" class="size-8">
+      <Button variant="outline" size="icon" class="size-8" @click="toggleMenu">
         <MenuIcon />
       </Button>
       <DropdownMenu>
