@@ -2,10 +2,7 @@
 import { useDark, useToggle } from '@vueuse/core'
 import { MoonIcon, SearchIcon, SunIcon } from 'lucide-vue-next'
 
-const profile = {
-  avatar_url: 'https://github.com/andrewbale.png',
-  full_name: 'Andrew Bale',
-}
+const { profile } = storeToRefs(useAuthStore())
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -18,14 +15,14 @@ const toggleDark = useToggle(isDark)
       <Input class="w-full pl-8 bg-background" type="text" placeholder="Search..." />
     </form>
 
-    <div class="flex justify-center items-center gap-1">
+    <div class="flex justify-center items-center gap-2">
       <Button @click="toggleDark()" class="size-8">
         <Transition name="scale" mode="out-in">
           <SunIcon v-if="isDark" />
           <MoonIcon v-else />
         </Transition>
       </Button>
-      <div class="w-8">
+      <div class="size-8">
         <DropdownMenu v-if="profile">
           <DropdownMenuTrigger>
             <Avatar>
@@ -39,7 +36,14 @@ const toggleDark = useToggle(isDark)
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink
+                :to="{ name: '/users/[username]', params: { username: profile.username } }"
+                class="size-full"
+              >
+                Profile
+              </RouterLink>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

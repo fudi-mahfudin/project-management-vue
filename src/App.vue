@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { LoaderCircleIcon } from 'lucide-vue-next'
+import { useMeta } from 'vue-meta'
 import { RouterView } from 'vue-router'
 
 const errorStore = useErrorStore()
@@ -15,6 +16,14 @@ onMounted(() => {
 const { user } = storeToRefs(useAuthStore())
 const AuthLayout = defineAsyncComponent(() => import('@/components/layout/main/AuthLayout.vue'))
 const GuestLayout = defineAsyncComponent(() => import('@/components/layout/main/GuestLayout.vue'))
+
+useMeta({
+  title: 'Pulse Project Management',
+  description: {
+    name: 'description',
+    content: 'Pulse is a project management tool that helps you organize your work.',
+  },
+})
 </script>
 
 <template>
