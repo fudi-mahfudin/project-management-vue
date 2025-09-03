@@ -25,75 +25,77 @@ const collabs = project.value?.collaborators
 </script>
 
 <template>
-  <Table v-if="project">
-    <TableRow>
-      <TableHead>Name</TableHead>
-      <TableCell>
-        <AppInPlaceEditText v-model="project.name" @commit="updateProject" />
-      </TableCell>
-    </TableRow>
-    <TableRow>
-      <TableHead>Description</TableHead>
-      <AppInPlaceEditTextarea v-model="project.description" @commit="updateProject" />
-    </TableRow>
-    <TableRow>
-      <TableHead>Status</TableHead>
-      <AppInPlaceEditStatus v-model="project.status" @commit="updateProject" />
-    </TableRow>
-    <TableRow>
-      <TableHead>Collaborators</TableHead>
-      <TableCell>
-        <div class="flex">
-          <Avatar
-            class="-mr-4 border border-primary hover:scale-110 transition-transform"
-            v-for="collab in collabs"
-            :key="collab.id"
-          >
-            <RouterLink
-              :to="{ name: '/users/[username]', params: { username: collab.username } }"
-              class="w-full h-full flex items-center justify-center"
+  <div class="flex flex-col">
+    <Table v-if="project">
+      <TableRow>
+        <TableHead>Name</TableHead>
+        <TableCell>
+          <AppInPlaceEditText v-model="project.name" @commit="updateProject" />
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableHead>Description</TableHead>
+        <AppInPlaceEditTextarea v-model="project.description" @commit="updateProject" />
+      </TableRow>
+      <TableRow>
+        <TableHead>Status</TableHead>
+        <AppInPlaceEditStatus v-model="project.status" @commit="updateProject" />
+      </TableRow>
+      <TableRow>
+        <TableHead>Collaborators</TableHead>
+        <TableCell>
+          <div class="flex">
+            <Avatar
+              class="-mr-4 border border-primary hover:scale-110 transition-transform"
+              v-for="collab in collabs"
+              :key="collab.id"
             >
-              <AvatarImage :src="collab.avatar_url || ''" alt="profile image" />
-              <AvatarFallback>{{ collab.username.charAt(0).toUpperCase() }}</AvatarFallback>
-            </RouterLink>
-          </Avatar>
-        </div>
-      </TableCell>
-    </TableRow>
-  </Table>
+              <RouterLink
+                :to="{ name: '/users/[username]', params: { username: collab.username } }"
+                class="w-full h-full flex items-center justify-center"
+              >
+                <AvatarImage :src="collab.avatar_url || ''" alt="profile image" />
+                <AvatarFallback>{{ collab.username.charAt(0).toUpperCase() }}</AvatarFallback>
+              </RouterLink>
+            </Avatar>
+          </div>
+        </TableCell>
+      </TableRow>
+    </Table>
 
-  <section v-if="project" class="mt-10 flex flex-col md:flex-row gap-5 justify-between grow">
-    <div class="flex-1">
-      <h2>Tasks</h2>
-      <div class="table-container">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Due Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow v-for="task in project.tasks" :key="task.id">
-              <TableCell class="p-0">
-                <RouterLink
-                  :to="{ name: '/tasks/[id]', params: { id: task.id } }"
-                  class="hover:bg-secondary block p-4"
-                >
-                  {{ task.name }}
-                </RouterLink>
-              </TableCell>
-              <TableCell>
-                <AppInPlaceEditStatus readonly :modelValue="task.status" />
-              </TableCell>
-              <TableCell>{{ task.due_date }}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+    <section v-if="project" class="mt-10 flex flex-col md:flex-row gap-5 justify-between grow">
+      <div class="flex-1">
+        <h2>Tasks</h2>
+        <div class="table-container">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Due Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="task in project.tasks" :key="task.id">
+                <TableCell class="p-0">
+                  <RouterLink
+                    :to="{ name: '/tasks/[id]', params: { id: task.id } }"
+                    class="hover:bg-secondary block p-4"
+                  >
+                    {{ task.name }}
+                  </RouterLink>
+                </TableCell>
+                <TableCell>
+                  <AppInPlaceEditStatus readonly :modelValue="task.status" />
+                </TableCell>
+                <TableCell>{{ task.due_date }}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <style scoped>

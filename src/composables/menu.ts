@@ -1,3 +1,4 @@
+// Has moved to use provide/injection
 const menuOpen = ref(false)
 
 export const useMenu = () => {

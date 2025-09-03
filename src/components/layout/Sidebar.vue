@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMenu } from '@/composables/menu'
+import { menuKey, type MenuInjectionOptions } from '@/utils/injectionKeys'
 import { useWindowSize } from '@vueuse/core'
 import {
   BadgeCheckIcon,
@@ -39,7 +39,7 @@ const executeAction = async (linkTitle: string) => {
   }
 }
 
-const { menuOpen, toggleMenu } = useMenu()
+const { menuOpen, toggleMenu } = inject(menuKey) as MenuInjectionOptions
 const windowWidth = useWindowSize().width
 
 watchEffect(() => {
