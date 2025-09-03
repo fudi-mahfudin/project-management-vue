@@ -9,6 +9,8 @@ import {
   UserIcon,
 } from 'lucide-vue-next'
 
+defineEmits(['taskClicked'])
+
 const { profile } = storeToRefs(useAuthStore())
 
 const links = [
@@ -51,7 +53,7 @@ const executeAction = async (linkTitle: string) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem> Task </DropdownMenuItem>
+          <DropdownMenuItem @click="$emit('taskClicked')"> Task </DropdownMenuItem>
           <DropdownMenuItem> Project </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

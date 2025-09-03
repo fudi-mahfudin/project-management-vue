@@ -14,6 +14,7 @@ declare module 'vue' {
     AppInPlaceEditStatus: typeof import('./src/components/app-in-place-edit/AppInPlaceEditStatus.vue')['default']
     AppInPlaceEditText: typeof import('./src/components/app-in-place-edit/AppInPlaceEditText.vue')['default']
     AppInPlaceEditTextarea: typeof import('./src/components/app-in-place-edit/AppInPlaceEditTextarea.vue')['default']
+    AppNewTask: typeof import('./src/components/app-new/AppNewTask.vue')['default']
     AuthLayout: typeof import('./src/components/layout/main/AuthLayout.vue')['default']
     Avatar: typeof import('./src/components/ui/avatar/Avatar.vue')['default']
     AvatarFallback: typeof import('./src/components/ui/avatar/AvatarFallback.vue')['default']

@@ -17,21 +17,11 @@ const toggleValue = () => {
 
 <template>
   <div class="h-10 flex items-center" :class="{ 'cursor-pointer': !readonly }" @click="toggleValue">
-    <Transition mode="out-in">
+    <Transition name="scale" mode="out-in">
       <CircleCheckIcon v-if="modelValue === 'completed'" class="text-green-500" />
       <CircleDotIcon v-else class="text-gray-500" />
     </Transition>
   </div>
 </template>
 
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: transform 0.2s;
-}
-
-.v-enter-from,
-.v-leave-to {
-  transform: scale(0.5);
-}
-</style>
+<style scoped></style>
